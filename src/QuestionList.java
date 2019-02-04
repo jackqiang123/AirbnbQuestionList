@@ -4,14 +4,60 @@ public class QuestionList {
     public static void main(String[]args) throws Exception {
         //testArrayListQueue();
         //test2DIterator();
-        testPreferenceList();
+        //testPreferenceList();
+        //test10Wizards();
+        //testFindMedian();
+        //testBoggleGame();
+        //testComMenu();
+        //testRoundPrice();
     }
 
+    private static void testRoundPrice() {
+        double []p = new double[]{1.2, 2.3, 3.4};
+        int [] res = new RoundPrice().roundPrice(p);
+        for (int rr : res)
+            System.out.print(rr + ",");
+    }
+
+    private static void testComMenu() {
+        System.out.println(new CombMenu().getCombinationSum(new double[]{1.2, 1.3, 3.4, 6.3, 0.3, 5.5}, 4.7));
+    }
+
+    private static void testBoggleGame() {
+        Set<String> dict = new HashSet<>();
+        dict.add("apple");
+        dict.add("pear");
+        dict.add("amer");
+        char[][] matrix = new char[4][4];
+        matrix[0] = "cbap".toCharArray();
+        matrix[1] = "magp".toCharArray();
+        matrix[2] = "epel".toCharArray();
+        matrix[3] = "eear".toCharArray();
+
+        List<String> res = new BoggleGame().findLongestPath(matrix, dict);
+        System.out.println(res);
+    }
+    private static void testFindMedian() {
+        double x = new FindMedian().findMedianWithBinarySearch(new int[]{1,1, 1, 2});
+        System.out.println(x);
+    }
+    private static void test10Wizards() {
+        List<List<Integer>> edges = new ArrayList<>();
+        List<Integer> e0 = Arrays.asList(new Integer[]{1,2});
+        List<Integer> e1 = Arrays.asList(new Integer[]{3});
+        List<Integer> e2 = Arrays.asList(new Integer[]{3,4});
+        List<Integer> e3 = Arrays.asList(new Integer[]{4});
+
+        edges.add(e0);
+        edges.add(e1);
+        edges.add(e2);
+        edges.add(e3);
+        System.out.println(new TenWizards().getShortestPath(edges, 0, 4));
+    }
     private static void testPreferenceList() {
         PreferenceList pl = new PreferenceList();
         pl.alienOrder(new String[]{"wrt", "wrf", "er", "ett", "rftt"});
     }
-
     private static void test2DIterator() {
         List<List<Integer>>test = new ArrayList<>();
         List<Integer> d1 = new LinkedList<>(Arrays.asList(new Integer[]{1,2,3,4,5}));
@@ -39,7 +85,6 @@ public class QuestionList {
             System.out.println(it.next());
         }
     }
-
     public static void testArrayListQueue() throws Exception {
         ArrayListQueue queue = new ArrayListQueue(5);
         for (int i = 0; i < 100; i++) {
@@ -416,6 +461,434 @@ class FileSystem{
     public void watch(String path, Runnable callback){
         if (this.get(path) != null) {
             this.callbacks.put(path, callback);
+        }
+    }
+}
+
+class TenWizards{
+    public List<Integer> getShortestPath(List<List<Integer>> wizards, int start, int end){
+        Map<Integer, Integer> parents = new HashMap<>();
+        Map<Integer, Integer> distance = new HashMap<>();
+        distance.put(start, 0);
+
+        PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return distance.get(o1) - distance.get(o2);
+            }
+        });
+
+        queue.add(start);
+        while(!queue.isEmpty()) {
+            int cur = queue.remove();
+            if (cur == end) {
+                break;
+            }
+
+            int curDistance = distance.get(cur);
+            List<Integer> nb = wizards.get(cur);
+            for (Integer n : nb) {
+                int newDistance = curDistance + getDistance(cur, n);
+
+                if (distance.get(n) == null) {
+                    parents.put(n, cur);
+                    distance.put(n, newDistance);
+                }
+                else if (newDistance < distance.get(n)){
+                    parents.put(n, cur);
+                    distance.put(n, newDistance);
+                }
+
+                queue.remove(n);
+                queue.add(n);
+            }
+        }
+
+        if (distance.get(end) == null) {
+            return new ArrayList<>(); //cannot reach
+        }
+
+        List<Integer> res = new LinkedList<>();
+        res.add(end);
+
+        while(end != start) {
+            end = parents.get(end);
+            res.add(0, end);
+        }
+
+        return res;
+    }
+
+    private int getDistance(int i, int j) {
+        return (j-i) * (j-i);
+    }
+}
+
+class FindMedian{
+    public double findMedianWithBinarySearch(int[]data){
+        int max = findMax(data);
+        int min = findMin(data);
+
+        if (data.length%2 == 1) {
+            return helper(data, min, max, data.length/2 + 1);
+        }
+        else {
+            return (helper(data, min, max, data.length/2 + 1) + helper(data, min, max, data.length/2))*1.0/2;
+        }
+    }
+
+    // rank means number of elements smaller or equal to itself
+    private int helper(int[] data, int min, int max, int rank) {
+        while(min < max) {
+            int mid = (max - min)/2 + min;
+            int maxRank = findRank(data, mid);
+            if (maxRank >= rank) {
+                max = mid;
+            }
+            else {
+                min = mid + 1;
+            }
+        }
+
+        return min;
+    }
+
+    private int findRank(int[] data, int mid) {
+        int count = 0;
+        for (int d : data) {
+            if (d <= mid) count++;
+        }
+
+        return count;
+    }
+
+    private int findMin(int[] data) {
+        int min = Integer.MAX_VALUE;
+        for (int  d : data){
+            min = Math.min(min, d);
+        }
+
+        return min;
+    }
+
+    private int findMax(int[] data) {
+        int max = Integer.MIN_VALUE;
+        for (int  d : data){
+            max = Math.max(max, d);
+        }
+
+        return max;
+    }
+}
+
+class BoggleGame{
+    int h = 0;
+    int w = 0;
+    public List<String> findLongestPath(char[][]matrix, Set<String> dictonary) {
+        h = matrix.length;
+        w = matrix[0].length;
+
+        List<List<int[]>> allValidPath = findAllValidSegment(matrix, dictonary);
+        List<Integer> longestPathIndex = findLongPath(allValidPath);
+
+        List<String> res = new ArrayList<>();
+        for (Integer ls : longestPathIndex) {
+            StringBuilder sb = new StringBuilder();
+            for (int []id : allValidPath.get(ls)) {
+                sb.append(matrix[id[0]][id[1]]);
+            }
+
+            res.add(sb.toString());
+        }
+
+        return res;
+    }
+
+    // dfs to find the longest path
+    List<Integer> longestPath;
+
+    private List<Integer> findLongPath(List<List<int[]>> allValidPath) {
+        longestPath = new ArrayList<>();
+
+        for (int i = 0; i < allValidPath.size(); i++)
+            dfsFindLongestPath(allValidPath, new boolean[h][w], new LinkedList<Integer>(), i);
+
+        return longestPath;
+    }
+
+    private void dfsFindLongestPath(List<List<int[]>> allValidPath, boolean[][] visit, LinkedList<Integer> curRes, int curIndex) {
+        curRes.add(curIndex);
+        if (curRes.size() > longestPath.size()) {
+            longestPath = new ArrayList<>(curRes);
+        }
+
+        for (int i = 0; i < allValidPath.size(); i++) {
+            if (canPut(allValidPath.get(i), allValidPath.get(curIndex), visit)) {
+                updateVisit(visit, allValidPath.get(i));
+                dfsFindLongestPath(allValidPath, visit, curRes, i);
+                revertVisit(visit, allValidPath.get(i));
+            }
+        }
+
+        curRes.remove(curRes.size() - 1);
+    }
+
+    private boolean canPut(List<int[]> cur, List<int[]> last, boolean[][] visit) {
+        if (canPut(visit, cur)) {
+            int[] curStart = cur.get(0);
+            int[] lastEnd = last.get(last.size() - 1);
+            if (isNb(curStart, lastEnd)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isNb(int[] curStart, int[] lastEnd) {
+        int diff1= curStart[0] - lastEnd[0];
+        int diff2 = curStart[1] - lastEnd[1];
+        return Math.abs(diff1) + Math.abs(diff2) == 1;
+    }
+
+    private void revertVisit(boolean[][] visit, List<int[]> ints) {
+        for (int []id : ints) {
+            visit[id[0]][id[1]] = false;
+        }
+    }
+
+    private void updateVisit(boolean[][] visit, List<int[]> ints) {
+        for (int []id : ints) {
+            visit[id[0]][id[1]] = true;
+        }
+    }
+
+    private boolean canPut(boolean[][] visit, List<int[]> ints) {
+        for (int []id : ints) {
+            if (visit[id[0]][id[1]]) return false;
+        }
+
+        return true;
+    }
+
+    private List<List<int[]>> findAllValidSegment(char[][] matrix, Set<String> dictonary) {
+        Trie trie = new Trie();
+        for (String w : dictonary)
+            trie.add(w);
+
+        List<List<int[]>> res = new ArrayList<>();
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                dfsSearchWord(matrix, i, j, trie, res, "", new ArrayList<int[]>(), new boolean[h][w]);
+            }
+        }
+
+        return res;
+    }
+
+    int[]dxy = new int[]{-1,0,1,0,-1};
+    private void dfsSearchWord(char[][] matrix, int i, int j, Trie trie, List<List<int[]>> res, String prefix, ArrayList<int[]> cur, boolean[][]visit) {
+        if (visit[i][j])
+            return;
+
+        prefix += matrix[i][j];
+        visit[i][j] = true;
+        cur.add(new int[]{i,j});
+
+        if (!trie.containsPrefix(prefix)) {
+            visit[i][j] = false;
+            cur.remove(cur.size() - 1);
+            return;
+        }
+
+        if (trie.containsWord(prefix)) {
+            res.add(new ArrayList<>(cur));
+        }
+
+        for (int x = 0; x < 4; x++) {
+            int newI = i + dxy[x];
+            int newJ = j + dxy[x+1];
+            if (newI < 0 || newI >= h || newJ < 0 || newJ >= w) continue;
+            dfsSearchWord(matrix, newI, newJ, trie, res, prefix, cur, visit);
+        }
+
+        visit[i][j] = false;
+        cur.remove(cur.size() - 1);
+    }
+
+    class Trie{
+        TrieNode root = new TrieNode(false);
+
+        public void add(String w) {
+            TrieNode cur = root;
+            for (int i = 0; i < w.length(); i++) {
+                char c = w.charAt(i);
+                if (cur.children[c-'a'] == null) {
+                    cur.children[c-'a'] = new TrieNode(false);
+                }
+
+                if (i == w.length() - 1) {
+                    cur.children[c-'a'].isWord = true;
+                }
+
+                cur = cur.children[c-'a'];
+            }
+        }
+
+        public boolean containsPrefix(String prefix) {
+            TrieNode cur = root;
+            for (int i = 0; i < prefix.length(); i++) {
+                char c = prefix.charAt(i);
+                if (cur.children[c-'a'] == null) return false;
+                cur = cur.children[c-'a'];
+            }
+
+            return true;
+        }
+
+        public boolean containsWord(String prefix) {
+            TrieNode cur = root;
+            for (int i = 0; i < prefix.length(); i++) {
+                char c = prefix.charAt(i);
+                if (cur.children[c-'a'] == null) return false;
+                cur = cur.children[c-'a'];
+            }
+
+            return cur.isWord;
+        }
+    }
+
+    class TrieNode{
+        TrieNode[]children;
+        boolean isWord;
+
+        public TrieNode(boolean isWord){
+            children = new TrieNode[26];
+            this.isWord = isWord;
+        }
+    }
+
+}
+
+class CombMenu {
+    public List<List<Integer>> getCombinationSum(double[]price, double target){
+        List<List<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < price.length; i++) {
+            dfs(price, i, target, res, new ArrayList<Integer>());
+        }
+        
+        return res;
+    }
+
+    private void dfs(double[] price, int i, double target, List<List<Integer>> res, List<Integer> cur) {
+        target -= price[i];
+        cur.add(i);
+
+        if (approxZero(target)) {
+            res.add(new ArrayList<Integer>(cur));
+        }
+        else if (target > 0) {
+            for (int j = i + 1; j < price.length; j++) {
+                dfs(price, j, target, res, cur);
+            }
+        }
+
+        //target += price[i];
+        cur.remove(cur.size() - 1);
+    }
+
+    private boolean approxZero(double target) {
+        return target < 0.0001 && target > -0.0001;
+    }
+}
+
+class RoundPrice{
+    public int[] roundPrice(double[] prices) {
+        double total = 0;
+        for (double p : prices)
+            total += p;
+
+        int totalLowerRound = 0;
+        for (double p : prices) {
+            totalLowerRound += (int)p;
+        }
+
+        int target = (int)Math.round(total);
+        int numberNeedsToLower = target - totalLowerRound;
+
+        int[]res = new int[prices.length];
+        PriorityQueue<Integer> pq = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                double diff1 = Math.ceil(prices[o1]) - prices[o1];
+                double diff2 = Math.ceil(prices[o2]) - prices[o2];
+                if (diff1 <= diff2) return -1;
+                else return 1;
+            }
+        });
+
+        for (int i = 0; i < res.length; i++)
+        {
+            res[i] = (int)prices[i];
+            pq.add(i);
+        }
+
+        while(numberNeedsToLower > 0) {
+            numberNeedsToLower--;
+            int index = pq.remove();
+            res[index]++;
+        }
+
+        return res;
+    }
+}
+
+class CheapestFlight{
+
+    // an non-dp solution
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) {
+        if (src == dst) return 0;
+        int[][]table = new int[n][n];
+
+        for (int[]f : flights) {
+            table[f[0]][f[1]] = f[2];
+        }
+
+        PriorityQueue<Node> pq = new PriorityQueue<>(new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                return o1.distance - o2.distance;
+            }
+        });
+
+        pq.add(new Node(0, -1, src));
+
+        while(!pq.isEmpty()) {
+            Node cur = pq.remove();
+            // Note: we only check on deque. This is the time we are sure about the distance
+            if (cur.i == dst) {
+                return cur.distance;
+            }
+
+            for (int next = 0; next < n; next++) {
+                if (table[cur.i][next] == 0) continue;
+                Node newNode = new Node(cur.distance + table[cur.i][next], cur.hop + 1, next);
+                if (newNode.hop > K) continue;
+                pq.add(newNode);
+            }
+        }
+
+        return -1;
+    }
+
+    class Node{
+        int distance;
+        int hop;
+        int i;
+        public Node(int d, int hop, int i) {
+            this.distance = d;
+            this.hop = hop;
+            this.i = i;
         }
     }
 }
