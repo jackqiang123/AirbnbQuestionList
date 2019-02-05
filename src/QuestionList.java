@@ -10,19 +10,21 @@ public class QuestionList {
         //testBoggleGame();
         //testComMenu();
         //testRoundPrice();
+        //testCSVParser();
     }
 
+    private static void testCSVParser() {
+        System.out.println(new CSVParser().parseCSV("\"Alex\"\"A\"\"\",Med,am@g.com,1\"\"\"Alex a\"\"\""));
+    }
     private static void testRoundPrice() {
         double []p = new double[]{1.2, 2.3, 3.4};
         int [] res = new RoundPrice().roundPrice(p);
         for (int rr : res)
             System.out.print(rr + ",");
     }
-
     private static void testComMenu() {
         System.out.println(new CombMenu().getCombinationSum(new double[]{1.2, 1.3, 3.4, 6.3, 0.3, 5.5}, 4.7));
     }
-
     private static void testBoggleGame() {
         Set<String> dict = new HashSet<>();
         dict.add("apple");
@@ -97,6 +99,160 @@ public class QuestionList {
     }
 }
 
+class WiggleSort{
+    public void wiggleSort(int[] nums) {
+        for (int i = 1; i < nums.length; i++) {
+            if (i % 2 == 1) {
+                if (nums[i] < nums[i - 1]) {
+                    swap(nums, i, i - 1);
+                }
+            }
+            else {
+                if (nums[i] > nums[i-1]) {
+                    swap(nums, i, i - 1);
+                }
+            }
+        }
+    }
+
+    private void swap(int[] nums, int i, int i1) {
+        int t = nums[i]; nums[i] = nums[i1]; nums[i1] = t;
+    }
+
+    public void wiggleSortII(int[] nums) {
+        int median = findMedian(nums);
+        int i = 0;
+        int left = 0;
+        int right = nums.length - 1;
+        while(i <= right) {
+            if (nums[mapIndex(i, nums.length)] > median) {
+                swap(nums, mapIndex(i++, nums.length), mapIndex(left++, nums.length));
+            }
+            else if (nums[mapIndex(i, nums.length)] < median) {
+                swap(nums, mapIndex(i, nums.length), mapIndex(right--, nums.length));
+            }
+            else {
+                i++;
+            }
+        }
+    }
+
+    private int mapIndex(int i, int length) {
+        return (2 * i + 1) % (length | 1);
+    }
+
+    private int findMedian(int[] nums) { // Quick Selection will make this O(n) and constance space
+        Arrays.sort(nums);
+        return nums[(nums.length - 1)/ 2];
+    }
+}
+
+class CSVParser{
+    public String parseCSV(String str) {
+        List<String> res = new ArrayList<>();
+        boolean inQ = false;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (inQ) {
+                if (c != '"') {
+                    sb.append(c);
+                }
+                else {
+                    if (i == str.length() - 1 || str.charAt(i+1) != '"') {
+                        inQ = false;
+                    }
+                    else {
+                        sb.append('"');
+                    }
+                }
+            }
+            else {
+                if (c == '"') {
+                    inQ = true;
+                }
+                else if (c == ','){
+                    res.add(sb.toString());
+                    sb = new StringBuilder();
+                }
+                else {
+                    sb.append(c);
+                }
+
+            }
+        }
+
+        if (sb.length() > 0) {
+            res.add(sb.toString());
+        }
+
+        return String.join("|", res);
+    }
+}
+class SlidePuzzleSolver {
+    public int slidingPuzzle(int[][] board) {
+        Queue<String> queue = new LinkedList<>();
+        String finalState = "123450";
+
+        String initState = getState(board);
+        queue.add(initState);
+        Set<String> visit = new HashSet<>();
+        visit.add(initState);
+
+        int[]dxy = new int[]{-1,0,1,0,-1};
+        int step = 0;
+        while(!queue.isEmpty()) {
+            int qsize = queue.size();
+            for (int q = 0; q < qsize; q++) {
+                String cur = queue.remove();
+                if (cur.equals(finalState)) {
+                    return step;
+                }
+
+                int emptyIndex = cur.indexOf("0");
+                int i = emptyIndex/board[0].length;
+                int j = emptyIndex%board[0].length;
+
+                for (int d = 0; d < 4; d++) {
+                    int newI = i + dxy[d];
+                    int newJ = j + dxy[d+1];
+
+                    if (newI < 0 || newI >= board.length || newJ < 0 || newJ >= board[0].length)
+                        continue;
+
+                    int newIndex = newI * board[0].length + newJ;
+                    char[]array = cur.toCharArray();
+                    swap(array, newIndex, emptyIndex);
+                    String newState = new String(array);
+
+                    if (visit.add(newState)) {
+                        //  System.out.println(newState);
+                        queue.add(newState);
+                    }
+                }
+            }
+
+            step++;
+        }
+
+        return -1;
+    }
+
+    private void swap(char[] arr, int i, int j) {
+        char c = arr[i];arr[i] = arr[j]; arr[j] = c;
+    }
+
+    private String getState(int[][] board) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                sb.append(board[i][j]);
+            }
+        }
+
+        return sb.toString();
+    }
+}
 class CollatzConjecture{
     Map<Integer, Integer> cache = new HashMap<>();
     public int findLongestSteps(int number){
@@ -123,7 +279,6 @@ class CollatzConjecture{
         }
     }
 }
-
 class ArrayListQueue{
     int arraySize;
     Node head;
@@ -181,7 +336,6 @@ class ArrayListQueue{
         }
     }
 }
-
 class Flattern2DIterator implements Iterator<Integer> {
     List<List<Integer>> data;
     List<Iterator<Integer>> iterators;
@@ -220,7 +374,6 @@ class Flattern2DIterator implements Iterator<Integer> {
         iterators.get(index).remove();
     }
 }
-
 class PreferenceList{
     public String alienOrder(String[] words) {
         Map<Character, Set<Character>> higher = new HashMap<>();
@@ -270,7 +423,6 @@ class PreferenceList{
         return sb.length() == set.size() ?  sb.toString() : "";
     }
 }
-
 class DisplayPages{
     public List<String> displayPages(List<String> input, int pageSize){
         List<String> res = new ArrayList<>();
@@ -308,7 +460,6 @@ class DisplayPages{
         return res;
     }
 }
-
 class PalindromePair{
     public List<List<Integer>> palindromePairs(String[] words) {
         List<List<Integer>> res = new ArrayList<>();
@@ -373,7 +524,6 @@ class PalindromePair{
         return other.equals(s);
     }
 }
-
 class WaterDrop{
     public int[] pourWater(int[] heights, int V, int K) {
         for (int v = 0; v < V; v++) {
