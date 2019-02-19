@@ -1,3 +1,4 @@
+import java.net.Socket;
 import java.util.*;
 
 public class QuestionList {
@@ -11,8 +12,67 @@ public class QuestionList {
         //testComMenu();
         //testRoundPrice();
         //testCSVParser();
+        //testWebSocket();
+        //TestGuessNumber();
+        testWaterDrop();
     }
 
+    private static void testWaterDrop() {
+        int []input = new int[]{2,1,1,2,1,2,2};
+        int []backup = Arrays.copyOf(input, input.length);
+        new WaterDrop().pourWater(backup, 4, 3);
+        int max = 0;
+        for (int i : backup)
+            max = Math.max(max, i);
+
+        char[][]res = new char[max][input.length];
+        for (int i = 0; i < max; i++) {
+            int height = max - i;
+            for (int j = 0; j < input.length; j++) {
+
+                if (input[j] >= height) {
+                    res[i][j] = '#';
+                }
+                else if (backup[j] >= height) {
+                    res[i][j] = 'w';
+                }
+                else {
+                    res[i][j] = ' ';
+                }
+            }
+
+            System.out.println(new String(res[i]));
+        }
+
+    }
+
+    private static void TestGuessNumber() {
+        int worst = Integer.MAX_VALUE;
+        List<String> list = new ArrayList<>();
+        for (int i = 1; i <= 6; i++) {
+            for (int j = 1; j <= 6; j++) {
+                for (int k = 1; k <= 6; k++) {
+                    for (int l = 1; l <= 6; l++) {
+                        list.add(i + "" + j + "" +  k + "" +  l);
+                    }
+                }
+            }
+        }
+
+        for (int t = 0; t < 20; t++) {
+            for (String i : list) {
+                var prob = new GuessNumber(Integer.parseInt(i));
+                String res = prob.getBestCount();
+                worst = Math.min(worst, prob.count);
+            }
+        }
+
+        System.out.println(worst);
+    }
+    private static void testWebSocket() {
+        Socket client = new Socket();
+
+    }
     private static void testCSVParser() {
         System.out.println(new CSVParser().parseCSV("\"Alex\"\"A\"\"\",Med,am@g.com,1\"\"\"Alex a\"\"\""));
     }
@@ -99,96 +159,200 @@ public class QuestionList {
     }
 }
 
-class WiggleSort{
-    public void wiggleSort(int[] nums) {
-        for (int i = 1; i < nums.length; i++) {
-            if (i % 2 == 1) {
-                if (nums[i] < nums[i - 1]) {
-                    swap(nums, i, i - 1);
-                }
+
+
+
+// 第一档
+class WaterDrop{
+    public int[] pourWater(int[] heights, int V, int K) {
+
+        for (int v = 0; v < V; v++) {
+            int leftDrop = findDirection(heights, K, -1);
+            if (leftDrop > -1 && leftDrop != K) {
+                heights[leftDrop]++;
+                continue;
             }
-            else {
-                if (nums[i] > nums[i-1]) {
-                    swap(nums, i, i - 1);
-                }
+
+            int rightDrop = findDirection(heights, K, 1);
+            if (rightDrop < heights.length && rightDrop != K) {
+                heights[rightDrop]++;
+                continue;
+            }
+
+            heights[K]++;
+        }
+
+        return heights;
+    }
+
+    private int findDirection(int[] heights, int startIndex, int direction) {
+        int lowestIndex = startIndex;
+        for (int i = startIndex + direction; i >= 0 && i < heights.length; i += direction) {
+            if (heights[i] > heights[i - direction]) {
+                break; // can not flow over a peak
+            }
+
+            if (heights[i] < heights[lowestIndex]) {
+                lowestIndex = i;
             }
         }
-    }
 
-    private void swap(int[] nums, int i, int i1) {
-        int t = nums[i]; nums[i] = nums[i1]; nums[i1] = t;
-    }
-
-    public void wiggleSortII(int[] nums) {
-        int median = findMedian(nums);
-        int i = 0;
-        int left = 0;
-        int right = nums.length - 1;
-        while(i <= right) {
-            if (nums[mapIndex(i, nums.length)] > median) {
-                swap(nums, mapIndex(i++, nums.length), mapIndex(left++, nums.length));
-            }
-            else if (nums[mapIndex(i, nums.length)] < median) {
-                swap(nums, mapIndex(i, nums.length), mapIndex(right--, nums.length));
-            }
-            else {
-                i++;
-            }
-        }
-    }
-
-    private int mapIndex(int i, int length) {
-        return (2 * i + 1) % (length | 1);
-    }
-
-    private int findMedian(int[] nums) { // Quick Selection will make this O(n) and constance space
-        Arrays.sort(nums);
-        return nums[(nums.length - 1)/ 2];
+        return lowestIndex;
     }
 }
+class CheapestFlight{
 
-class CSVParser{
-    public String parseCSV(String str) {
-        List<String> res = new ArrayList<>();
-        boolean inQ = false;
+    // an non-dp solution
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) {
+        if (src == dst) return 0;
+        int[][]table = new int[n][n];
+
+        for (int[]f : flights) {
+            table[f[0]][f[1]] = f[2];
+        }
+
+        PriorityQueue<Node> pq = new PriorityQueue<>(new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                return o1.distance - o2.distance;
+            }
+        });
+
+        pq.add(new Node(0, -1, src));
+
+        while(!pq.isEmpty()) {
+            Node cur = pq.remove();
+            // Note: we only check on deque. This is the time we are sure about the distance
+            if (cur.i == dst) {
+                return cur.distance;
+            }
+
+            for (int next = 0; next < n; next++) {
+                if (table[cur.i][next] == 0) continue;
+                Node newNode = new Node(cur.distance + table[cur.i][next], cur.hop + 1, next);
+                if (newNode.hop > K) continue;
+                pq.add(newNode);
+            }
+        }
+
+        return -1;
+    }
+
+    class Node{
+        int distance;
+        int hop;
+        int i;
+        public Node(int d, int hop, int i) {
+            this.distance = d;
+            this.hop = hop;
+            this.i = i;
+        }
+    }
+}
+class FileSystem{
+    Map<String, Integer> data;
+    Map<String, Runnable> callbacks;
+    public FileSystem(){
+        this.data = new HashMap<>();
+        this.callbacks = new HashMap<>();
+    }
+
+    public boolean create(String path, int value) {
+        if (data.containsKey(path))
+            return false;
+
+        int lastIndex = path.lastIndexOf("/");
+        if (lastIndex == -1) {
+            return false;
+        }
+
+        String previousPath = path.substring(0, lastIndex);
+        if (previousPath.length() == 0 || this.data.containsKey(previousPath)) {
+            this.data.put(path, value);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public Integer get(String path) {
+        return this.data.get(path);
+    }
+
+    public boolean set(String path, int value) {
+        if (this.get(path) == null) return false;
+        this.data.put(path, value);
+
+        while(path.length() > 0) {
+            if (callbacks.containsKey(path)) {
+                callbacks.get(path).run();
+            }
+
+            int lastIndex = path.lastIndexOf("/");
+            path = path.substring(0, lastIndex);
+        }
+
+        return true;
+    }
+
+    public void watch(String path, Runnable callback){
+        if (this.get(path) != null) {
+            this.callbacks.put(path, callback);
+        }
+    }
+}
+class PreferenceList{
+    public String alienOrder(String[] words) {
+        Map<Character, Set<Character>> higher = new HashMap<>();
+        Map<Character, Set<Character>> lower = new HashMap<>();
+        Set<Character> set = new HashSet<>();
+        for (String w : words) {
+            for (int i = 0; i < w.length() - 1; i++) {
+                char c1 = w.charAt(i);
+                char c2 = w.charAt(i+1);
+                if (c1 == c2)
+                    continue;
+                if (higher.get(c2) == null) higher.put(c2, new HashSet<>());
+
+                higher.get(c2).add(c1);
+
+                if (lower.get(c1) == null) lower.put(c1, new HashSet<>());
+
+                lower.get(c1).add(c2);
+
+                set.add(c1);
+                set.add(c2);
+            }
+        }
+
+        Queue<Character> queue = new LinkedList<>();
+        for (char c : set) {
+            if (higher.get(c) == null || higher.size() == 0) {
+                queue.add(c);
+            }
+        }
+
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (inQ) {
-                if (c != '"') {
-                    sb.append(c);
-                }
-                else {
-                    if (i == str.length() - 1 || str.charAt(i+1) != '"') {
-                        inQ = false;
-                    }
-                    else {
-                        sb.append('"');
+        while(!queue.isEmpty()) {
+            char c = queue.remove();
+            sb.append(c);
+            Set<Character> next = lower.get(c);
+            if (next != null) {
+                for (char cc : next) {
+                    higher.get(cc).remove(c);
+                    if (higher.get(cc).size() == 0) {
+                        queue.add(cc);
                     }
                 }
             }
-            else {
-                if (c == '"') {
-                    inQ = true;
-                }
-                else if (c == ','){
-                    res.add(sb.toString());
-                    sb = new StringBuilder();
-                }
-                else {
-                    sb.append(c);
-                }
-
-            }
         }
 
-        if (sb.length() > 0) {
-            res.add(sb.toString());
-        }
-
-        return String.join("|", res);
+        return sb.length() == set.size() ?  sb.toString() : "";
     }
 }
+
+// 第二档
 class SlidePuzzleSolver {
     public int slidingPuzzle(int[][] board) {
         Queue<String> queue = new LinkedList<>();
@@ -251,213 +415,6 @@ class SlidePuzzleSolver {
         }
 
         return sb.toString();
-    }
-}
-class CollatzConjecture{
-    Map<Integer, Integer> cache = new HashMap<>();
-    public int findLongestSteps(int number){
-        if (number < 1) return 0;
-
-        int res = 0;
-        for (int i = 1; i <= number; i++) {
-            int curRes = findResult(i);
-            cache.put(i, curRes);
-            res = Math.max(curRes, res);
-        }
-
-        return res;
-    }
-
-    private int findResult(int i) {
-        if (cache.containsKey(i)) return cache.get(i);
-
-        if (i % 2 == 0) {
-            return 1 + findResult(i/2);
-        }
-        else {
-            return 1 + findResult(3*i+1);
-        }
-    }
-}
-class ArrayListQueue{
-    int arraySize;
-    Node head;
-    Node tail;
-    List<Node> queue;
-    int size;
-
-    public ArrayListQueue(int fixSizeArray){
-        this.arraySize = fixSizeArray;
-        this.queue = new LinkedList<>();
-        this.size = 0;
-    }
-
-    public void offer(int v){
-        if (size == 0) {
-            queue.add(new Node(this.arraySize));
-            this.head = queue.get(0);
-            this.tail = queue.get(0);
-        }
-
-        if (this.tail.curIndex == this.arraySize) {
-            this.tail = new Node(this.arraySize);
-            queue.add(this.tail);
-        }
-
-        this.size++;
-        this.tail.array[this.tail.curIndex++] = v;
-    }
-
-    public int poll() throws Exception {
-        if (this.size == 0)
-            throw new Exception();
-
-        if (this.head.removeIndex == this.arraySize) {
-            this.queue.remove(0);
-            this.head = this.queue.get(0);
-        }
-
-        this.size--;
-        return this.head.array[this.head.removeIndex++];
-    }
-
-    private int[] getNewBlock(){
-        return new int[arraySize];
-    }
-
-    class Node{
-        int[]array;
-        int curIndex;
-        int removeIndex;
-        public Node(int len){
-            this.curIndex = 0;
-            this.removeIndex = 0;
-            this.array = new int[len];
-        }
-    }
-}
-class Flattern2DIterator implements Iterator<Integer> {
-    List<List<Integer>> data;
-    List<Iterator<Integer>> iterators;
-    int index;
-
-    public Flattern2DIterator(List<List<Integer>> data){
-        this.data = data;
-        this.index = 0;
-        iterators = new ArrayList<>();
-        for (List<Integer> ls : data) {
-            if (!ls.isEmpty())
-                iterators.add(ls.iterator());
-        }
-    }
-
-    @Override
-    public boolean hasNext() {
-        if (index >= iterators.size())
-            return false;
-
-        if (!iterators.get(index).hasNext()) {
-            index++;
-        }
-
-         return (index < iterators.size() && iterators.get(index).hasNext());
-    }
-
-    @Override
-    public Integer next() {
-        int value = iterators.get(index).next();
-        return value;
-    }
-
-    @Override
-    public void remove() {
-        iterators.get(index).remove();
-    }
-}
-class PreferenceList{
-    public String alienOrder(String[] words) {
-        Map<Character, Set<Character>> higher = new HashMap<>();
-        Map<Character, Set<Character>> lower = new HashMap<>();
-        Set<Character> set = new HashSet<>();
-        for (String w : words) {
-            for (int i = 0; i < w.length() - 1; i++) {
-                char c1 = w.charAt(i);
-                char c2 = w.charAt(i+1);
-                if (c1 == c2)
-                    continue;
-                if (higher.get(c2) == null) higher.put(c2, new HashSet<>());
-
-                higher.get(c2).add(c1);
-
-                if (lower.get(c1) == null) lower.put(c1, new HashSet<>());
-
-                lower.get(c1).add(c2);
-
-                set.add(c1);
-                set.add(c2);
-            }
-        }
-
-        Queue<Character> queue = new LinkedList<>();
-        for (char c : set) {
-            if (higher.get(c) == null || higher.size() == 0) {
-                queue.add(c);
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-        while(!queue.isEmpty()) {
-            char c = queue.remove();
-            sb.append(c);
-            Set<Character> next = lower.get(c);
-            if (next != null) {
-                for (char cc : next) {
-                    higher.get(cc).remove(c);
-                    if (higher.get(cc).size() == 0) {
-                        queue.add(cc);
-                    }
-                }
-            }
-        }
-
-        return sb.length() == set.size() ?  sb.toString() : "";
-    }
-}
-class DisplayPages{
-    public List<String> displayPages(List<String> input, int pageSize){
-        List<String> res = new ArrayList<>();
-        Iterator<String> iter = input.iterator();
-        Set<String> idSet = new HashSet<>();
-        boolean hasReachEnd = false;
-        int counter = 0;
-        while(iter.hasNext()) {
-            String cur = iter.next();
-            String id = cur.split(",")[0];
-            if (!idSet.contains(id) || hasReachEnd) {
-                res.add(cur);
-                idSet.add(id);
-                counter++;
-                iter.remove();
-            }
-
-            if (counter == pageSize) {
-                if (!input.isEmpty()) {
-                    res.add(" ");
-
-                    idSet.clear();
-                    counter=0;
-                    hasReachEnd = false;
-                    iter = input.iterator();
-                }
-            }
-
-            if (!iter.hasNext()) {
-                hasReachEnd = true;
-                iter = input.iterator();
-            }
-        }
-
-        return res;
     }
 }
 class PalindromePair{
@@ -524,156 +481,6 @@ class PalindromePair{
         return other.equals(s);
     }
 }
-class WaterDrop{
-    public int[] pourWater(int[] heights, int V, int K) {
-        for (int v = 0; v < V; v++) {
-            int leftDrop = findDirection(heights, K, -1);
-            if (leftDrop > -1 && leftDrop != K) {
-                heights[leftDrop]++;
-                continue;
-            }
-
-            int rightDrop = findDirection(heights, K, 1);
-            if (rightDrop < heights.length && rightDrop != K) {
-                heights[rightDrop]++;
-                continue;
-            }
-
-            heights[K]++;
-        }
-
-        return heights;
-    }
-
-    private int findDirection(int[] heights, int startIndex, int direction) {
-        int lowestIndex = startIndex;
-        for (int i = startIndex + direction; i >= 0 && i < heights.length; i += direction) {
-            if (heights[i] > heights[i - direction]) {
-                break; // can not flow over a peak
-            }
-
-            if (heights[i] < heights[lowestIndex]) {
-                lowestIndex = i;
-            }
-        }
-
-        return lowestIndex;
-    }
-}
-
-class FileSystem{
-    Map<String, Integer> data;
-    Map<String, Runnable> callbacks;
-    public FileSystem(){
-        this.data = new HashMap<>();
-        this.callbacks = new HashMap<>();
-    }
-
-    public boolean create(String path, int value) {
-        if (data.containsKey(path))
-            return false;
-
-        int lastIndex = path.lastIndexOf("/");
-        if (lastIndex == -1) {
-            return false;
-        }
-
-        String previousPath = path.substring(0, lastIndex);
-        if (previousPath.length() == 0 || this.data.containsKey(previousPath)) {
-            this.data.put(path, value);
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    public Integer get(String path) {
-        return this.data.get(path);
-    }
-
-    public boolean set(String path, int value) {
-        if (this.get(path) == null) return false;
-        this.data.put(path, value);
-
-        while(path.length() > 0) {
-            if (callbacks.containsKey(path)) {
-                callbacks.get(path).run();
-            }
-
-            int lastIndex = path.lastIndexOf("/");
-            path = path.substring(0, lastIndex);
-        }
-
-        return true;
-    }
-
-    public void watch(String path, Runnable callback){
-        if (this.get(path) != null) {
-            this.callbacks.put(path, callback);
-        }
-    }
-}
-
-class TenWizards{
-    public List<Integer> getShortestPath(List<List<Integer>> wizards, int start, int end){
-        Map<Integer, Integer> parents = new HashMap<>();
-        Map<Integer, Integer> distance = new HashMap<>();
-        distance.put(start, 0);
-
-        PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return distance.get(o1) - distance.get(o2);
-            }
-        });
-
-        queue.add(start);
-        while(!queue.isEmpty()) {
-            int cur = queue.remove();
-            if (cur == end) {
-                break;
-            }
-
-            int curDistance = distance.get(cur);
-            List<Integer> nb = wizards.get(cur);
-            for (Integer n : nb) {
-                int newDistance = curDistance + getDistance(cur, n);
-
-                if (distance.get(n) == null) {
-                    parents.put(n, cur);
-                    distance.put(n, newDistance);
-                }
-                else if (newDistance < distance.get(n)){
-                    parents.put(n, cur);
-                    distance.put(n, newDistance);
-                }
-
-                queue.remove(n);
-                queue.add(n);
-            }
-        }
-
-        if (distance.get(end) == null) {
-            return new ArrayList<>(); //cannot reach
-        }
-
-        List<Integer> res = new LinkedList<>();
-        res.add(end);
-
-        while(end != start) {
-            end = parents.get(end);
-            res.add(0, end);
-        }
-
-        return res;
-    }
-
-    private int getDistance(int i, int j) {
-        return (j-i) * (j-i);
-    }
-}
-
 class FindMedian{
     public double findMedianWithBinarySearch(int[]data){
         int max = findMax(data);
@@ -728,6 +535,194 @@ class FindMedian{
         }
 
         return max;
+    }
+}
+class Flattern2DIterator implements Iterator<Integer> {
+    List<List<Integer>> data;
+    List<Iterator<Integer>> iterators;
+    int index;
+
+    public Flattern2DIterator(List<List<Integer>> data){
+        this.data = data;
+        this.index = 0;
+        iterators = new ArrayList<>();
+        for (List<Integer> ls : data) {
+            if (!ls.isEmpty())
+                iterators.add(ls.iterator());
+        }
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (index >= iterators.size())
+            return false;
+
+        if (!iterators.get(index).hasNext()) {
+            index++;
+        }
+
+        return (index < iterators.size() && iterators.get(index).hasNext());
+    }
+
+    @Override
+    public Integer next() {
+        int value = iterators.get(index).next();
+        return value;
+    }
+
+    @Override
+    public void remove() {
+        iterators.get(index).remove();
+    }
+}
+class CombMenu {
+    public List<List<Integer>> getCombinationSum(double[]price, double target){
+        List<List<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < price.length; i++) {
+            dfs(price, i, target, res, new ArrayList<Integer>());
+        }
+
+        return res;
+    }
+
+    private void dfs(double[] price, int i, double target, List<List<Integer>> res, List<Integer> cur) {
+        target -= price[i];
+        cur.add(i);
+
+        if (approxZero(target)) {
+            res.add(new ArrayList<Integer>(cur));
+        }
+        else if (target > 0) {
+            for (int j = i + 1; j < price.length; j++) {
+                dfs(price, j, target, res, cur);
+            }
+        }
+
+        cur.remove(cur.size() - 1);
+    }
+
+    private boolean approxZero(double target) {
+        return target < 0.0001 && target > -0.0001;
+    }
+}
+class CIDR{
+    public List<String> ipToCIDR(String ip, int n) {
+        long start = 0;
+        for (String s : ip.split("\\.")) {
+            start = start * 256 + Integer.parseInt(s);
+        }
+
+        List<String> res = new ArrayList<>();
+        while(n > 0) {
+            int num = Math.min((int)Long.lowestOneBit(start), Integer.highestOneBit(n));
+
+            res.add(getCIDR(start, num));
+
+            start += num;
+            n -= num;
+        }
+
+        return res;
+    }
+
+    private String getCIDR(long x, int step) {
+        int[] ans = new int[4];
+        ans[0] = (int) (x & 255); x >>= 8;
+        ans[1] = (int) (x & 255); x >>= 8;
+        ans[2] = (int) (x & 255); x >>= 8;
+        ans[3] = (int) x;
+        int len = 32 - (int) (Math.log(step) / Math.log(2));
+        return ans[3] + "." + ans[2] + "." + ans[1] + "." + ans[0] + "/" + len;
+    }
+}
+
+class GuessNumber{
+    int secret;
+    int count = 0;
+    public GuessNumber(int secret){
+        this.secret = secret;
+    }
+
+    public String getBestCount(){
+        List<String> list = new ArrayList<>();
+        for (int i = 1; i <= 6; i++) {
+            for (int j = 1; j <= 6; j++) {
+                for (int k = 1; k <= 6; k++) {
+                    for (int l = 1; l <= 6; l++) {
+                        list.add(i + "" + j + "" +  k + "" +  l);
+                    }
+                }
+            }
+        }
+
+        Collections.shuffle(list);
+
+        while(list.size() > 1) {
+            List<String> nextRound = new ArrayList<>();
+            int[]res = guessAPI(list.get(0));
+            count++;
+            if (res[0] == 4) {
+                return list.get(0);
+            }
+
+            for (int i = 1; i < list.size(); i++) {
+                if (match(res, list.get(i), list.get(0))) {
+                    nextRound.add(list.get(i));
+                }
+            }
+
+            list = nextRound;
+        }
+
+        return list.iterator().next();
+    }
+
+    private boolean match(int[] res, String s, String s1) {
+        String secrect = s1;
+        int a = 0;
+        int b = 0;
+
+        int[]count = new int[6];
+        int[]ownCount = new int[6];
+        for (int i = 0; i < secrect.length(); i++) {
+            if (secrect.charAt(i) == s.charAt(i)) {
+                a++;
+            }
+            else {
+                count[secrect.charAt(i) - '1']++;
+                ownCount[s.charAt(i) - '1']++;
+            }
+        }
+
+        for (int i = 0; i < 6; i++) {
+            b += Math.min(count[i], ownCount[i]);
+        }
+
+        return a == res[0] && b == res[1];
+    }
+
+    private int[] guessAPI(String s) {
+        String secrect = this.secret + "";
+        int a = 0;
+        int b = 0;
+
+        int[]count = new int[6];
+        int[]ownCount = new int[6];
+        for (int i = 0; i < secrect.length(); i++) {
+            if (secrect.charAt(i) == s.charAt(i)) {
+                a++;
+            }
+            else {
+                count[secrect.charAt(i) - '1']++;
+                ownCount[s.charAt(i) - '1']++;
+            }
+        }
+
+        for (int i = 0; i < 6; i++) {
+            b += Math.min(count[i], ownCount[i]);
+        }
+
+        return new int[]{a,b};
     }
 }
 
@@ -907,7 +902,6 @@ class BoggleGame{
             return cur.isWord;
         }
     }
-
     class TrieNode{
         TrieNode[]children;
         boolean isWord;
@@ -917,41 +911,281 @@ class BoggleGame{
             this.isWord = isWord;
         }
     }
-
 }
 
-class CombMenu {
-    public List<List<Integer>> getCombinationSum(double[]price, double target){
-        List<List<Integer>> res = new ArrayList<>();
-        for (int i = 0; i < price.length; i++) {
-            dfs(price, i, target, res, new ArrayList<Integer>());
+// 第三档
+class WiggleSort{
+    public void wiggleSort(int[] nums) {
+        for (int i = 1; i < nums.length; i++) {
+            if (i % 2 == 1) {
+                if (nums[i] < nums[i - 1]) {
+                    swap(nums, i, i - 1);
+                }
+            }
+            else {
+                if (nums[i] > nums[i-1]) {
+                    swap(nums, i, i - 1);
+                }
+            }
         }
-        
+    }
+
+    private void swap(int[] nums, int i, int i1) {
+        int t = nums[i]; nums[i] = nums[i1]; nums[i1] = t;
+    }
+
+    public void wiggleSortII(int[] nums) {
+        int median = findMedian(nums);
+        int i = 0;
+        int left = 0;
+        int right = nums.length - 1;
+        while(i <= right) {
+            if (nums[mapIndex(i, nums.length)] > median) {
+                swap(nums, mapIndex(i++, nums.length), mapIndex(left++, nums.length));
+            }
+            else if (nums[mapIndex(i, nums.length)] < median) {
+                swap(nums, mapIndex(i, nums.length), mapIndex(right--, nums.length));
+            }
+            else {
+                i++;
+            }
+        }
+    }
+
+    private int mapIndex(int i, int length) {
+        return (2 * i + 1) % (length | 1);
+    }
+
+    private int findMedian(int[] nums) {
+        // Quick Selection will make this O(n) and constance space
+        Arrays.sort(nums);
+        return nums[(nums.length - 1)/ 2];
+    }
+}
+class ArrayListQueue{
+    int arraySize;
+    Node head;
+    Node tail;
+    List<Node> queue;
+    int size;
+
+    public ArrayListQueue(int fixSizeArray){
+        this.arraySize = fixSizeArray;
+        this.queue = new LinkedList<>();
+        this.size = 0;
+    }
+
+    public void offer(int v){
+        if (size == 0) {
+            queue.add(new Node(this.arraySize));
+            this.head = queue.get(0);
+            this.tail = queue.get(0);
+        }
+
+        if (this.tail.curIndex == this.arraySize) {
+            this.tail = new Node(this.arraySize);
+            queue.add(this.tail);
+        }
+
+        this.size++;
+        this.tail.array[this.tail.curIndex++] = v;
+    }
+
+    public int poll() throws Exception {
+        if (this.size == 0)
+            throw new Exception();
+
+        if (this.head.removeIndex == this.arraySize) {
+            this.queue.remove(0);
+            this.head = this.queue.get(0);
+        }
+
+        this.size--;
+        return this.head.array[this.head.removeIndex++];
+    }
+
+    private int[] getNewBlock(){
+        return new int[arraySize];
+    }
+
+    class Node{
+        int[]array;
+        int curIndex;
+        int removeIndex;
+        public Node(int len){
+            this.curIndex = 0;
+            this.removeIndex = 0;
+            this.array = new int[len];
+        }
+    }
+}
+class CollatzConjecture{
+    Map<Integer, Integer> cache = new HashMap<>();
+    public int findLongestSteps(int number){
+        if (number < 1) return 0;
+
+        int res = 0;
+        for (int i = 1; i <= number; i++) {
+            int curRes = findResult(i);
+            cache.put(i, curRes);
+            res = Math.max(curRes, res);
+        }
+
         return res;
     }
 
-    private void dfs(double[] price, int i, double target, List<List<Integer>> res, List<Integer> cur) {
-        target -= price[i];
-        cur.add(i);
+    private int findResult(int i) {
+        if (cache.containsKey(i)) return cache.get(i);
 
-        if (approxZero(target)) {
-            res.add(new ArrayList<Integer>(cur));
+        if (i % 2 == 0) {
+            return 1 + findResult(i/2);
         }
-        else if (target > 0) {
-            for (int j = i + 1; j < price.length; j++) {
-                dfs(price, j, target, res, cur);
+        else {
+            return 1 + findResult(3*i+1);
+        }
+    }
+}
+class DisplayPages{
+    public List<String> displayPages(List<String> input, int pageSize){
+        List<String> res = new ArrayList<>();
+        Iterator<String> iter = input.iterator();
+        Set<String> idSet = new HashSet<>();
+        boolean hasReachEnd = false;
+        int counter = 0;
+        while(iter.hasNext()) {
+            String cur = iter.next();
+            String id = cur.split(",")[0];
+            if (!idSet.contains(id) || hasReachEnd) {
+                res.add(cur);
+                idSet.add(id);
+                counter++;
+                iter.remove();
+            }
+
+            if (counter == pageSize) {
+                if (!input.isEmpty()) {
+                    res.add(" ");
+
+                    idSet.clear();
+                    counter=0;
+                    hasReachEnd = false;
+                    iter = input.iterator();
+                }
+            }
+
+            if (!iter.hasNext()) {
+                hasReachEnd = true;
+                iter = input.iterator();
             }
         }
 
-        //target += price[i];
-        cur.remove(cur.size() - 1);
-    }
-
-    private boolean approxZero(double target) {
-        return target < 0.0001 && target > -0.0001;
+        return res;
     }
 }
+// traval buddy
+// minumum verties to travers
 
+// 备用
+class CSVParser{
+    public String parseCSV(String str) {
+        List<String> res = new ArrayList<>();
+        boolean inQ = false;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (inQ) {
+                if (c != '"') {
+                    sb.append(c);
+                }
+                else {
+                    if (i == str.length() - 1 || str.charAt(i+1) != '"') {
+                        inQ = false;
+                    }
+                    else {
+                        sb.append('"');
+                    }
+                }
+            }
+            else {
+                if (c == '"') {
+                    inQ = true;
+                }
+                else if (c == ','){
+                    res.add(sb.toString());
+                    sb = new StringBuilder();
+                }
+                else {
+                    sb.append(c);
+                }
+
+            }
+        }
+
+        if (sb.length() > 0) {
+            res.add(sb.toString());
+        }
+
+        return String.join("|", res);
+    }
+}
+class TenWizards{
+    public List<Integer> getShortestPath(List<List<Integer>> wizards, int start, int end){
+        Map<Integer, Integer> parents = new HashMap<>();
+        Map<Integer, Integer> distance = new HashMap<>();
+        distance.put(start, 0);
+
+        PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return distance.get(o1) - distance.get(o2);
+            }
+        });
+
+        queue.add(start);
+        while(!queue.isEmpty()) {
+            int cur = queue.remove();
+            if (cur == end) {
+                break;
+            }
+
+            int curDistance = distance.get(cur);
+            List<Integer> nb = wizards.get(cur);
+            for (Integer n : nb) {
+                int newDistance = curDistance + getDistance(cur, n);
+
+                if (distance.get(n) == null) {
+                    parents.put(n, cur);
+                    distance.put(n, newDistance);
+                }
+                else if (newDistance < distance.get(n)){
+                    parents.put(n, cur);
+                    distance.put(n, newDistance);
+                }
+
+                queue.remove(n);
+                queue.add(n);
+            }
+        }
+
+        if (distance.get(end) == null) {
+            return new ArrayList<>(); //cannot reach
+        }
+
+        List<Integer> res = new LinkedList<>();
+        res.add(end);
+
+        while(end != start) {
+            end = parents.get(end);
+            res.add(0, end);
+        }
+
+        return res;
+    }
+
+    private int getDistance(int i, int j) {
+        return (j-i) * (j-i);
+    }
+}
 class RoundPrice{
     public int[] roundPrice(double[] prices) {
         double total = 0;
@@ -993,52 +1227,4 @@ class RoundPrice{
     }
 }
 
-class CheapestFlight{
 
-    // an non-dp solution
-    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) {
-        if (src == dst) return 0;
-        int[][]table = new int[n][n];
-
-        for (int[]f : flights) {
-            table[f[0]][f[1]] = f[2];
-        }
-
-        PriorityQueue<Node> pq = new PriorityQueue<>(new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                return o1.distance - o2.distance;
-            }
-        });
-
-        pq.add(new Node(0, -1, src));
-
-        while(!pq.isEmpty()) {
-            Node cur = pq.remove();
-            // Note: we only check on deque. This is the time we are sure about the distance
-            if (cur.i == dst) {
-                return cur.distance;
-            }
-
-            for (int next = 0; next < n; next++) {
-                if (table[cur.i][next] == 0) continue;
-                Node newNode = new Node(cur.distance + table[cur.i][next], cur.hop + 1, next);
-                if (newNode.hop > K) continue;
-                pq.add(newNode);
-            }
-        }
-
-        return -1;
-    }
-
-    class Node{
-        int distance;
-        int hop;
-        int i;
-        public Node(int d, int hop, int i) {
-            this.distance = d;
-            this.hop = hop;
-            this.i = i;
-        }
-    }
-}

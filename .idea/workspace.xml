@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e87c2b2d-abdd-4122-a15d-d64b28499348" name="Default Changelist" comment="add some question">
+      <change afterPath="$PROJECT_DIR$/.idea/azureSettings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/ArrayListQueue$Node.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/ArrayListQueue.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/BoggleGame$Trie.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/BoggleGame$TrieNode.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/BoggleGame.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/CSVParser.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/CheapestFlight$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/CheapestFlight$Node.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/CheapestFlight.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/CollatzConjecture.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/CombMenu.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/DisplayPages.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/FileSystem.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/FindMedian.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/Flattern2DIterator.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/PalindromePair.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/PreferenceList.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/QuestionList.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/RoundPrice$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/RoundPrice.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/SlidePuzzleSolver.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/TenWizards$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/TenWizards.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/AirbnbQuestionList/WaterDrop.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/QuestionList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/QuestionList.java" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/out/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/AirbnbQuestionList$QuestionList.ic" NAME="QuestionList Coverage Results" MODIFIED="1549243624887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myElementSize" value="241" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/QuestionList.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="405">
+              <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="method#testWebSocket#0;class#QuestionList#0" />
+                <element signature="method#testCSVParser#0;class#QuestionList#0" />
+                <element signature="method#testRoundPrice#0;class#QuestionList#0" />
+                <element signature="method#testComMenu#0;class#QuestionList#0" />
+                <element signature="method#testBoggleGame#0;class#QuestionList#0" />
+                <element signature="method#testFindMedian#0;class#QuestionList#0" />
+                <element signature="method#test10Wizards#0;class#QuestionList#0" />
+                <element signature="method#testPreferenceList#0;class#QuestionList#0" />
+                <element signature="method#test2DIterator#0;class#QuestionList#0" />
+                <element signature="method#testArrayListQueue#0;class#QuestionList#0" />
+                <element signature="class#CheapestFlight#0" />
+                <element signature="e#5532#5533#0" expanded="true" />
+                <element signature="e#5596#5597#0" expanded="true" />
+                <element signature="class#FileSystem#0" />
+                <element signature="class#PreferenceList#0" />
+                <element signature="class#SlidePuzzleSolver#0" />
+                <element signature="class#PalindromePair#0" />
+                <element signature="class#FindMedian#0" />
+                <element signature="class#Flattern2DIterator#0" />
+                <element signature="class#CombMenu#0" />
+                <element signature="class#CIDR#0" />
+                <element signature="e#17161#17162#0" expanded="true" />
+                <element signature="e#17197#17198#0" expanded="true" />
+                <element signature="class#BoggleGame#0" />
+                <element signature="method#canPut#0;class#BoggleGame#0" />
+                <element signature="method#isNb#0;class#BoggleGame#0" />
+                <element signature="method#revertVisit#0;class#BoggleGame#0" />
+                <element signature="method#canPut#1;class#BoggleGame#0" />
+                <element signature="class#Trie#0;class#BoggleGame#0" />
+                <element signature="class#TrieNode#0;class#BoggleGame#0" />
+                <element signature="class#WiggleSort#0" />
+                <element signature="class#CollatzConjecture#0" />
+                <element signature="class#DisplayPages#0" />
+                <element signature="class#CSVParser#0" />
+                <element signature="class#TenWizards#0" />
+                <element signature="e#31478#31479#0" expanded="true" />
+                <element signature="e#31552#31553#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/QuestionList.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="549" />
+    <option name="y" value="253" />
+    <option name="width" value="1400" />
+    <option name="height" value="538" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="AirbnbQuestionList" type="b2602c69:ProjectViewProjectNode" />
+              <item name="AirbnbQuestionList" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="AirbnbQuestionList" type="b2602c69:ProjectViewProjectNode" />
+              <item name="AirbnbQuestionList" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1550538856020" />
+    <property name="extract.method.default.visibility" value="private" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="QuestionList" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="QuestionList" />
+      <module name="AirbnbQuestionList" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.QuestionList" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e87c2b2d-abdd-4122-a15d-d64b28499348" name="Default Changelist" comment="" />
+      <created>1548914539117</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1548914539117</updated>
+    </task>
+    <task id="LOCAL-00001" summary="first commit">
+      <created>1549157597875</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1549157597875</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add some question">
+      <created>1549247676274</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1549247676274</updated>
+    </task>
+    <task id="LOCAL-00003" summary="add some question">
+      <created>1549342218090</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1549342218090</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1359275" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Designer" order="2" />
+      <window_info id="UI Designer" order="3" />
+      <window_info id="Favorites" order="4" side_tool="true" />
+      <window_info id="Capture Tool" order="5" />
+      <window_info id="Image Layers" order="6" />
+      <window_info id="Azure Explorer" order="7" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.23076923" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.31527627" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Debug Remote Spark Job in Cluster" order="7" />
+      <window_info anchor="bottom" id="Remote Spark Job in Cluster" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Cosmos Serverless Spark Jobs" order="10" />
+      <window_info anchor="bottom" id="Version Control" order="11" />
+      <window_info anchor="bottom" id="Terminal" order="12" />
+      <window_info anchor="bottom" id="Messages" order="13" weight="0.32917964" />
+      <window_info anchor="bottom" id="Azure Activity Log" order="14" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Maven" order="3" />
+      <window_info anchor="right" id="Palette" order="4" />
+      <window_info anchor="right" id="Capture Analysis" order="5" />
+      <window_info anchor="right" id="Palette&#9;" order="6" />
+      <window_info anchor="right" id="Theme Preview" order="7" />
+      <window_info anchor="right" id="Coverage" order="8" side_tool="true" weight="0.32995737" />
+    </layout>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first commit" />
+    <MESSAGE value="add some question" />
+    <option name="LAST_COMMIT_MESSAGE" value="add some question" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/QuestionList.java</url>
+          <line>85</line>
+          <properties />
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/QuestionList.java</url>
+          <line>724</line>
+          <properties />
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/QuestionList.java</url>
+          <line>660</line>
+          <properties />
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/QuestionList.java</url>
+          <line>29</line>
+          <properties />
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/QuestionList.java</url>
+          <line>834</line>
+          <properties class="BoggleGame" method="dfsSearchWord">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/QuestionList.java</url>
+          <line>917</line>
+          <properties class="WiggleSort" method="wiggleSort">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="jar://C:/Program Files/Java/jdk-11.0.1/lib/src.zip!/java.base/java/util/Iterator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2106">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+          <folding>
+            <element signature="e#2974#2975#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-11.0.1/lib/src.zip!/java.base/java/util/LinkedList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="821">
+          <caret line="528" selection-start-line="528" selection-end-line="528" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/QuestionList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#testWebSocket#0;class#QuestionList#0" />
+            <element signature="method#testCSVParser#0;class#QuestionList#0" />
+            <element signature="method#testRoundPrice#0;class#QuestionList#0" />
+            <element signature="method#testComMenu#0;class#QuestionList#0" />
+            <element signature="method#testBoggleGame#0;class#QuestionList#0" />
+            <element signature="method#testFindMedian#0;class#QuestionList#0" />
+            <element signature="method#test10Wizards#0;class#QuestionList#0" />
+            <element signature="method#testPreferenceList#0;class#QuestionList#0" />
+            <element signature="method#test2DIterator#0;class#QuestionList#0" />
+            <element signature="method#testArrayListQueue#0;class#QuestionList#0" />
+            <element signature="class#CheapestFlight#0" />
+            <element signature="e#5532#5533#0" expanded="true" />
+            <element signature="e#5596#5597#0" expanded="true" />
+            <element signature="class#FileSystem#0" />
+            <element signature="class#PreferenceList#0" />
+            <element signature="class#SlidePuzzleSolver#0" />
+            <element signature="class#PalindromePair#0" />
+            <element signature="class#FindMedian#0" />
+            <element signature="class#Flattern2DIterator#0" />
+            <element signature="class#CombMenu#0" />
+            <element signature="class#CIDR#0" />
+            <element signature="e#17161#17162#0" expanded="true" />
+            <element signature="e#17197#17198#0" expanded="true" />
+            <element signature="class#BoggleGame#0" />
+            <element signature="method#canPut#0;class#BoggleGame#0" />
+            <element signature="method#isNb#0;class#BoggleGame#0" />
+            <element signature="method#revertVisit#0;class#BoggleGame#0" />
+            <element signature="method#canPut#1;class#BoggleGame#0" />
+            <element signature="class#Trie#0;class#BoggleGame#0" />
+            <element signature="class#TrieNode#0;class#BoggleGame#0" />
+            <element signature="class#WiggleSort#0" />
+            <element signature="class#CollatzConjecture#0" />
+            <element signature="class#DisplayPages#0" />
+            <element signature="class#CSVParser#0" />
+            <element signature="class#TenWizards#0" />
+            <element signature="e#31478#31479#0" expanded="true" />
+            <element signature="e#31552#31553#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
