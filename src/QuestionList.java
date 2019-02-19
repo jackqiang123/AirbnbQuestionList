@@ -1,4 +1,8 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class QuestionList {
@@ -8,15 +12,38 @@ public class QuestionList {
         //testPreferenceList();
         //test10Wizards();
         //testFindMedian();
-        //testBoggleGame();
+        testBoggleGame();
         //testComMenu();
         //testRoundPrice();
         //testCSVParser();
         //testWebSocket();
         //TestGuessNumber();
-        testWaterDrop();
+        //testWaterDrop();
+        //testFileSystem();
+        //testPuzzleSlide();
+        //new OtherExampe().test(null);
     }
 
+    private static void testPuzzleSlide() {
+        int[][]board = new int[][]{{1,2,3}, {4, 6, 5}, {7,8,0}};
+        int step = new SlidePuzzleSolver().slidingPuzzle(board);
+        System.out.println(step);
+    }
+    private static void testFileSystem() {
+        FileSystem fs  = new FileSystem();
+        fs.create("/a", 1);
+        System.out.println(fs.get("/a"));
+        fs.create("/a/b", 2);
+        System.out.println(fs.get("/a/b"));
+        fs.watch("/a", new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("testRun");
+            }
+        });
+
+        fs.set("/a/b", 3);
+    }
     private static void testWaterDrop() {
         int []input = new int[]{2,1,1,2,1,2,2};
         int []backup = Arrays.copyOf(input, input.length);
@@ -45,7 +72,6 @@ public class QuestionList {
         }
 
     }
-
     private static void TestGuessNumber() {
         int worst = Integer.MAX_VALUE;
         List<String> list = new ArrayList<>();
@@ -159,6 +185,24 @@ public class QuestionList {
     }
 }
 
+class Client {
+    private Socket socket = null;
+    private DataInputStream input = null;
+    private DataOutputStream output = null;
+    public Client(String address, int port) throws IOException {
+        socket = new Socket(address, port);
+        input = new DataInputStream(socket.getInputStream());
+        output = new DataOutputStream(socket.getOutputStream());
+    }
+
+    public String callAPI() throws IOException {
+        output.writeUTF("test123");
+        byte[]data = new byte[24];
+        input.read(data);
+        System.out.println(new String(data, StandardCharsets.UTF_8));
+        return "";
+    }
+}
 
 
 
@@ -356,7 +400,7 @@ class PreferenceList{
 class SlidePuzzleSolver {
     public int slidingPuzzle(int[][] board) {
         Queue<String> queue = new LinkedList<>();
-        String finalState = "123450";
+        String finalState = "123456780";
 
         String initState = getState(board);
         queue.add(initState);
@@ -538,12 +582,10 @@ class FindMedian{
     }
 }
 class Flattern2DIterator implements Iterator<Integer> {
-    List<List<Integer>> data;
     List<Iterator<Integer>> iterators;
     int index;
 
     public Flattern2DIterator(List<List<Integer>> data){
-        this.data = data;
         this.index = 0;
         iterators = new ArrayList<>();
         for (List<Integer> ls : data) {
@@ -635,7 +677,6 @@ class CIDR{
         return ans[3] + "." + ans[2] + "." + ans[1] + "." + ans[0] + "/" + len;
     }
 }
-
 class GuessNumber{
     int secret;
     int count = 0;
@@ -729,88 +770,71 @@ class GuessNumber{
 class BoggleGame{
     int h = 0;
     int w = 0;
+    Map<Integer, String> indexToString = new HashMap<>();
     public List<String> findLongestPath(char[][]matrix, Set<String> dictonary) {
         h = matrix.length;
         w = matrix[0].length;
 
         List<List<int[]>> allValidPath = findAllValidSegment(matrix, dictonary);
-        List<Integer> longestPathIndex = findLongPath(allValidPath);
-
-        List<String> res = new ArrayList<>();
-        for (Integer ls : longestPathIndex) {
+        for (int i = 0; i < allValidPath.size(); i++) {
+            List<int[]> ls = allValidPath.get(i);
             StringBuilder sb = new StringBuilder();
-            for (int []id : allValidPath.get(ls)) {
-                sb.append(matrix[id[0]][id[1]]);
+            for (int []index : ls) {
+                sb.append(matrix[index[0]][index[1]]);
             }
 
-            res.add(sb.toString());
+            indexToString.put(i, sb.toString());
         }
 
-        return res;
+        List<Integer> res = findLongPath(allValidPath);
+        List<String> r = new ArrayList<>();
+        for (int i : res) {
+            r.add(indexToString.get(i));
+        }
+
+        return r;
     }
 
-    // dfs to find the longest path
-    List<Integer> longestPath;
 
     private List<Integer> findLongPath(List<List<int[]>> allValidPath) {
-        longestPath = new ArrayList<>();
-
-        for (int i = 0; i < allValidPath.size(); i++)
-            dfsFindLongestPath(allValidPath, new boolean[h][w], new LinkedList<Integer>(), i);
-
+        List<Integer> longestPath = new ArrayList<>();
+        dfsFindLongestPath(allValidPath, new HashSet(), new ArrayList<Integer>(), 0, longestPath);
         return longestPath;
     }
 
-    private void dfsFindLongestPath(List<List<int[]>> allValidPath, boolean[][] visit, LinkedList<Integer> curRes, int curIndex) {
-        curRes.add(curIndex);
-        if (curRes.size() > longestPath.size()) {
-            longestPath = new ArrayList<>(curRes);
+    private void dfsFindLongestPath(List<List<int[]>> allValidPath,
+                                    Set<Integer> visit,
+                                    List<Integer> curRes,
+                                    int start,
+                                    List<Integer> longestPath) {
+        if (start == allValidPath.size() && curRes.size() > longestPath.size()) {
+            longestPath.clear();
+            for (int x : curRes)
+                longestPath.add(x);
         }
 
-        for (int i = 0; i < allValidPath.size(); i++) {
-            if (canPut(allValidPath.get(i), allValidPath.get(curIndex), visit)) {
-                updateVisit(visit, allValidPath.get(i));
-                dfsFindLongestPath(allValidPath, visit, curRes, i);
-                revertVisit(visit, allValidPath.get(i));
+        for (int i = start; i < allValidPath.size(); i++) {
+            if (noConflict(visit, allValidPath.get(i))) {
+                curRes.add(i);
+                for (int []index : allValidPath.get(i)) {
+                    visit.add(index[0]*w + index[1]);
+                }
+
+                dfsFindLongestPath(allValidPath, visit, curRes, i + 1, longestPath);
+                for (int []index : allValidPath.get(i)) {
+                    visit.remove(index[0]*w + index[1]);
+                }
+
+                curRes.remove(curRes.size() - 1);
             }
         }
-
-        curRes.remove(curRes.size() - 1);
     }
 
-    private boolean canPut(List<int[]> cur, List<int[]> last, boolean[][] visit) {
-        if (canPut(visit, cur)) {
-            int[] curStart = cur.get(0);
-            int[] lastEnd = last.get(last.size() - 1);
-            if (isNb(curStart, lastEnd)) {
-                return true;
+    private boolean noConflict(Set<Integer> visit, List<int[]> ints) {
+        for (int []index : ints) {
+            if (visit.contains(index[0]*w+index[1])) {
+                return false;
             }
-        }
-
-        return false;
-    }
-
-    private boolean isNb(int[] curStart, int[] lastEnd) {
-        int diff1= curStart[0] - lastEnd[0];
-        int diff2 = curStart[1] - lastEnd[1];
-        return Math.abs(diff1) + Math.abs(diff2) == 1;
-    }
-
-    private void revertVisit(boolean[][] visit, List<int[]> ints) {
-        for (int []id : ints) {
-            visit[id[0]][id[1]] = false;
-        }
-    }
-
-    private void updateVisit(boolean[][] visit, List<int[]> ints) {
-        for (int []id : ints) {
-            visit[id[0]][id[1]] = true;
-        }
-    }
-
-    private boolean canPut(boolean[][] visit, List<int[]> ints) {
-        for (int []id : ints) {
-            if (visit[id[0]][id[1]]) return false;
         }
 
         return true;
@@ -961,6 +985,48 @@ class WiggleSort{
         Arrays.sort(nums);
         return nums[(nums.length - 1)/ 2];
     }
+
+    //findKthLargest(nums, (nums.length + 1) / 2);
+    public int findKthLargest(int[] nums, int k) {
+        return findRank(nums, 0, nums.length - 1, k - 1);
+    }
+
+    private int findRank(int []nums, int start, int end, int k){
+        //System.out.println(start + " : " + k);
+        if (start >= end) return nums[end];
+        int mid = (start + end)/2;
+        int mN = nums[mid];
+        int []aux = new int[end - start + 1];
+        int lo = 0;
+        int l1 = 0;
+        int hi = aux.length - 1;
+        // int i = start;
+        //sort color
+        for (int i = start; i <= end; i++) {
+            if (mN > nums[i]) {
+                aux[hi--] = nums[i];
+            }
+            else if (mN == nums[i]) {
+                aux[l1++] = nums[i];
+            }
+            else {
+                aux[l1++] = mN;
+                aux[lo++] = nums[i];
+            }
+        }
+        // lo is the rank, and start of mN
+
+        //System.out.println("return here");
+        if (lo == k) return mN;
+        for (int i = start; i <= end; i++) {
+            nums[i] = aux[i - start];
+        }
+
+        if (lo < k)
+            return findRank(nums, start + lo + 1, end, k - lo - 1);
+        else
+            return findRank(nums, start, start + lo - 1, k);
+    }
 }
 class ArrayListQueue{
     int arraySize;
@@ -1009,6 +1075,8 @@ class ArrayListQueue{
     }
 
     class Node{
+
+        // Or we can implement a linkedList our self, with next point
         int[]array;
         int curIndex;
         int removeIndex;
@@ -1083,6 +1151,8 @@ class DisplayPages{
     }
 }
 // traval buddy
+class TravelBuddy{
+}
 // minumum verties to travers
 
 // 备用
@@ -1094,20 +1164,20 @@ class CSVParser{
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if (inQ) {
-                if (c != '"') {
+                if (c != '\"') {
                     sb.append(c);
                 }
                 else {
-                    if (i == str.length() - 1 || str.charAt(i+1) != '"') {
+                    if (i == str.length() - 1 || str.charAt(i+1) != '\"') {
                         inQ = false;
                     }
                     else {
-                        sb.append('"');
+                        sb.append('\"');
                     }
                 }
             }
             else {
-                if (c == '"') {
+                if (c == '\"') {
                     inQ = true;
                 }
                 else if (c == ','){
@@ -1226,5 +1296,245 @@ class RoundPrice{
         return res;
     }
 }
+class Regx{
+    public boolean regMatch(String s, String p) {
+        if (p.length() == 0) return s.length() == 0;
+        if (p.length() == 1) {
+            if (s.length() != 1) return false;
+            return s.charAt(0) == p.charAt(0);
+        }
+
+        if (s.length() != 0 && (p.charAt(0) == '.' || p.charAt(0) == s.charAt(0))) {
+            if (p.charAt(1) == '*') {
+                return regMatch(s, p.substring(2)) || regMatch(s.substring(1), p.substring(2));
+            }
+            else if (p.charAt(1) == '+') {
+                StringBuilder sb = new StringBuilder(p);
+                sb.replace(1,1, "*");
+                return regMatch(s.substring(1), sb.toString());
+            }
+            else {
+                return regMatch(s.substring(1), p.substring(1));
+            }
+        }
+
+        return p.charAt(1) == '*' && regMatch(s, p.substring(2));
+    }
+}
+class Pyramids{
+        Map<String, List<String>> map;
+        public boolean pyramidTransition(String bottom, List<String> allowed) {
+            map = new HashMap<>();
+            for (String allow : allowed) {
+                if (!map.containsKey(allow.substring(0, 2))) map.put(allow.substring(0, 2), new ArrayList<>());
+                map.get(allow.substring(0, 2)).add(allow.charAt(2)+"");
+            }
+
+            return canBuild(bottom);
+        }
+
+        private boolean canBuild(String bottom) {
+            if (bottom.length() <= 1) return true;
+            else if (bottom.length() == 2) return map.containsKey(bottom);
+            else {
+                List<String> nextLevel = getNextLevel(bottom, 1);
+                for (String s : nextLevel) {
+                    if (canBuild(s)) return true;
+                }
+
+                return false;
+            }
+        }
+
+        private List<String> getNextLevel(String bottom, int i) {
+            if (i == bottom.length()) {
+                return new ArrayList<>();
+            }
+            else if (i == bottom.length() - 1) {
+                if (map.containsKey(bottom.substring(i - 1, i + 1)))
+                    return map.get(bottom.substring(i-1,i+1));
+                else return new ArrayList<>();
+            }
+            else {
+                String lastBit = bottom.substring(i - 1, i + 1);
+                List<String> curBit = map.get(lastBit);
+                if (curBit == null) return new ArrayList<>();
+
+                List<String> others = getNextLevel(bottom, i + 1);
+                List<String> res = new ArrayList<>();
+                for (String c : curBit)
+                    for (String o : others)
+                        res.add(c + "" + o);
+
+                return res;
+            }
+        }
+}
+class MinimumVerticsTraverse{
+    public List<Integer> getMinNode(int[][]edges, int n){
+        Map<Integer, Set<Integer>> nodes = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            nodes.put(i, new HashSet<>());
+        }
+
+        for (int []edge : edges) {
+            nodes.get(edge[0]).add(edge[1]);
+        }
+
+        Set<Integer> visited = new HashSet<>();
+        Set<Integer> res = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            if (!visited.contains(i)) {
+                res.add(i);
+                visited.add(i);
+                search(res, nodes, i, i, visited, new HashSet<>());
+            }
+
+        }
+        return new ArrayList<>(res);
+    }
+
+    private void search(Set<Integer> res, Map<Integer, Set<Integer>> nodes, int cur, int start, Set<Integer> visited, HashSet<Object> curVisited) {
+        curVisited.add(cur);
+        visited.add(cur);
+
+        for (int next : nodes.get(cur)) {
+            if (res.contains(next) && next != start) {
+                res.remove(next);
+            }
+
+            if (!curVisited.contains(next)) {
+                search(res, nodes, next, start, visited, curVisited);
+            }
+        }
+
+    }
+}
+class OtherExampe {
 
 
+        public void test(String[] args) {
+            char[][] board = {{'a','b'},{'c','d'},{'a','b'},{'c','d'}};
+            String[] dict = {"ab","ac","acd","c","d"};
+            System.out.println(boggle(board,dict));
+        }
+
+        public ArrayList<String> boggle(char[][] board, String[] dict) {
+            ArrayList<String> res = new ArrayList<>();
+            Trie trie = new Trie();
+            for(String s : dict) trie.insert(s);
+            boolean[][] visited = new boolean[board.length][board[0].length];
+            ArrayList<String> curRes = new ArrayList<>();
+
+            dfs(board,visited,trie,res,curRes,0,0);
+
+            return res;
+        }
+
+        public void dfs(char[][] board, boolean[][] visited, Trie trie, ArrayList<String> res,
+                               ArrayList<String> curRes, int x, int y) {
+            int row = board.length, column = board[0].length;
+            if(x == row) {
+                if(curRes.size() > res.size()) {
+                    res.clear();
+                    for(String s : curRes) res.add(s);
+                }
+                return;
+            }
+
+            ArrayList<String> strs = new ArrayList<>();
+            List<ArrayList<Integer>> paths = new ArrayList<>();
+
+            dfs2(board,visited,trie,strs,paths,new StringBuilder(),new ArrayList<Integer>(),x,y);
+            dfs(board,visited,trie,res,curRes,x+(y+1)/column,(y+1)%column);
+            for(int i = 0; i < strs.size(); i++) {
+                curRes.add(strs.get(i));
+                for(int j : paths.get(i)) {
+                    visited[j/column][j%column] = true;
+                }
+                trie.delete(strs.get(i));
+
+                dfs(board,visited,trie,res,curRes,x+(y+1)/column,(y+1)%column);
+
+                curRes.remove(strs.get(i));
+                for(int j : paths.get(i)) {
+                    visited[j/column][j%column] = false;
+                }
+                trie.insert(strs.get(i));
+            }
+        }
+
+        public void dfs2(char[][] board, boolean[][] visited, Trie trie, ArrayList<String> strs,
+                                List<ArrayList<Integer>> paths, StringBuilder curString, ArrayList<Integer> curPath, int x, int y) {
+            int row = board.length, column = board[0].length;
+            if(x<0 || x>=row || y<0 || y>=column || visited[x][y]) return;
+            curString.append(board[x][y]);
+            if(!trie.hasPrefix(curString.toString())) {
+                curString.deleteCharAt(curString.length()-1);
+                return;
+            }
+
+            visited[x][y] = true;
+            curPath.add(x*column+y);
+            if(trie.hasWord(curString.toString())) {
+                paths.add((ArrayList<Integer>)curPath.clone());
+                strs.add(curString.toString());
+            }
+
+            dfs2(board,visited,trie,strs,paths,curString,curPath,x+1,y);
+            dfs2(board,visited,trie,strs,paths,curString,curPath,x-1,y);
+            dfs2(board,visited,trie,strs,paths,curString,curPath,x,y+1);
+            dfs2(board,visited,trie,strs,paths,curString,curPath,x,y-1);
+
+            curString.deleteCharAt(curString.length()-1);
+            visited[x][y] = false;
+            curPath.remove(curPath.size()-1);
+        }
+
+    }
+
+    class Trie {
+        public Trie[] next;
+        public boolean isWord;
+        public Trie() {
+            next = new Trie[26];
+        }
+
+        public void insert(String s) {
+            Trie cur = this;
+            for(char c : s.toCharArray()) {
+                if(cur.next[c-'a'] == null) cur.next[c-'a'] = new Trie();
+                cur = cur.next[c-'a'];
+            }
+            cur.isWord = true;
+        }
+
+        public boolean hasWord(String s) {
+            Trie cur = this;
+            for(char c : s.toCharArray()) {
+                if(cur.next[c-'a'] == null) return false;
+                cur = cur.next[c-'a'];
+            }
+            return cur.isWord;
+        }
+
+        public boolean hasPrefix(String s) {
+            Trie cur = this;
+            for(char c : s.toCharArray()) {
+                if(cur.next[c-'a'] == null) return false;
+                cur = cur.next[c-'a'];
+            }
+            return true;
+        }
+
+        public void delete(String s) {
+            Trie cur = this;
+            for(char c : s.toCharArray()) {
+                if(cur.next[c-'a'] == null) return;
+                cur = cur.next[c-'a'];
+            }
+            cur.isWord = false;
+        }
+
+
+}
